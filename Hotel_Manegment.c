@@ -8,11 +8,127 @@ void total_amt(int price, int time, int qty)
 }
 void room(int qty, int i)
 {
-    srand((0));
+    srand(time(0));
     for (i = 1; i <= qty; i++)
     {
         int random_num = rand() % 510;
         printf("Room No. : %d\n", random_num);
+    }
+}
+
+void payment(char upi_id[50], char debit_card[20], char credit_card[20], char password_banking[50], char user_id[50], int payment_type, int card, int pin, int lenght_card, int price, int time, int qty, int i, int room_n)
+{
+    lenght_card = 0;
+
+    while (1)
+    {
+
+        printf("Payment method\n1.UPI Payment\n2.Card Payment\n3.Banking Channel\n4.Case\\Offline\n>");
+        scanf("%d", &payment_type);
+        if (payment_type == 1)
+        {
+            while (1)
+            {
+                printf("UPI Payment\n");
+                printf("UPI ID [ok,paytm,etc]:");
+                scanf("%s", upi_id);
+
+                if (strstr(upi_id, "@") != 0)
+                {
+                    printf("Valid UPI Id\n");
+
+                    printf("Pay bill\n");
+                    total_amt(price, time, qty);
+                    printf("Enter Pin No.:");
+                    scanf("%d", &pin);
+                    printf("\nSecessfull Payment\n");
+                    room(qty, room_n);
+
+                    break;
+                }
+                else
+                {
+                    printf("Invalid UPI Id\n");
+                }
+            }
+        }
+
+        if (payment_type == 2)
+        {
+            while (1)
+            {
+                printf("Card Payment\n");
+                printf("1.Debit Card\n2.Credit Card\n>");
+                scanf("%d", &card);
+
+                if (card == 1)
+                {
+                    printf("Debit card No.:");
+                    scanf("%s", debit_card);
+                    lenght_card = strlen(debit_card);
+                    if (lenght_card == 16)
+                    {
+                        printf("Valid Card No\n");
+                        printf("Pay bill\n");
+                        total_amt(price, time, qty);
+                        printf("Enter Pin No.:");
+                        scanf("%d", &pin);
+                        printf("\nSecessfull Payment\n");
+                        room(qty, room_n);
+                        break;
+                    }
+                    else
+                    {
+                        printf("Invalid enter 16 digit No\n");
+                    }
+                }
+                else if (card == 2)
+                {
+                    printf("Credit card No.:");
+                    scanf("%s", credit_card);
+                    lenght_card = strlen(credit_card);
+                    if (lenght_card == 16)
+                    {
+                        printf("Valid Card No\n");
+                        printf("Pay bill\n");
+                        total_amt(price, time, qty);
+                        printf("Enter Pin No.:");
+                        scanf("%d", &pin);
+                        printf("\nSecessfull Payment\n");
+                        room(qty, room_n);
+                        break;
+                    }
+                    else
+                    {
+                        printf("Invalid enter 16 digit No.\n");
+                    }
+                }
+            }
+        }
+
+        if (payment_type == 3)
+        {
+            printf("\t\t\t\t\t\tBanking Channel\n");
+            printf("Net Banking\n");
+            printf("User ID:");
+            scanf("%s", user_id);
+            printf("Password:");
+            scanf("%s", password_banking);
+            printf("Secessful Login\n");
+            printf("Pay bill\n");
+            total_amt(price, time, qty);
+            printf("Enter Pin No.:");
+            scanf("%d", &pin);
+            printf("\nSecessfull Payment\n");
+            room(qty, room_n);
+        }
+
+        if (payment_type == 4)
+        {
+            printf("Case\\Offline\n");
+            room(qty, room_n);
+        }
+        break;
     }
 }
 
@@ -21,10 +137,14 @@ int main()
     char name[25], email_save[100], country[40], phone[11];
     char state[37][40] = {"Select State", "1.Andhra Pradesh", "2.Arunachal Pradesh", "3.Assam", "4.Bihar", "5.Chhattisgarh", "6.Goa", "7.Gujarat", "8.Haryana", "9.Himachal Pradesh", "10.Jharkhand", "11.Karnataka", "12.Kerala", "13.Madhya Pradesh", "14.Maharashtra", "15.Manipur", "16.Meghalaya", "17.Mizoram", "18.Nagaland", "19.Odisha", "20.Punjab", "21.Rajasthan", "22.Sikkim", "23.Tamil Nadu", "24.Telangana", "25.Tripura", "26.Uttar Pradesh", "27.Uttarakhand", "28.West Bengal", "29.Andaman and Nicobar Islands", "30.Chandigarh", "31.Dadra and Nagar Haveli", "32.Daman and Diu", "33.Jammu Kashmir", "34.Lakshadweep", "35.Delhi National Capital Territory", "36.Puducherry"};
     char save_password[100], enter_password[100], email_enter[100];
+    char upi_id[50], debit_card[20], credit_card[20], password_banking[50], user_id[50]; // payment
     int service, enquiry;
     int len = 0;
     int gender, book_room, price, time;
     int qty, room_n, random_num, exit;
+    int payment_type, card, pin; // payment
+    int lenght_card = 0;         // payment
+
     //----------------------Home Page------------------------
 
     while (1)
@@ -32,7 +152,7 @@ int main()
 
         printf("\n\t\t\t\t\t\tHOTEL MANEGMENT\n");
         printf("Name :");
-        scanf("%s", &name);
+        scanf("%s", name);
         printf("\t\t\t\t\t\tWelcome %s\n", name);
         printf("Services \n1.Enquiry\n2.Room Booking\n3.About our Hotel\n");
         printf("Select :");
@@ -81,9 +201,9 @@ int main()
             while (1)
             {
                 printf("Phone*:");
-                scanf("%s", &phone);
+                scanf("%s", phone);
                 len = strlen(phone);
-                if (len < 0 || len > 9)
+                if (len == 10)
                 {
                     printf("Valid Number\n");
                     break;
@@ -119,7 +239,7 @@ int main()
             while (1)
             {
                 printf("\nEmail*:");
-                scanf("%s", &email_save);
+                scanf("%s", email_save);
 
                 if (strstr(email_save, "@gmail.com") != 0)
                 {
@@ -133,7 +253,7 @@ int main()
             }
 
             printf("\nCountry*:");
-            scanf("%s", &country);
+            scanf("%s", country);
             int i;
             for (i = 0; i < 36; i++)
             {
@@ -145,7 +265,7 @@ int main()
             printf("\n%s\n", state[i]);
 
             printf("Enter Password :");
-            scanf("%s", &save_password);
+            scanf("%s", save_password);
 
             printf("\n\t\t\t\t\t\tSucessful registration");
 
@@ -156,7 +276,7 @@ int main()
             while (1)
             {
                 printf("\nEmail* :");
-                scanf("%s", &email_enter);
+                scanf("%s", email_enter);
 
                 if (strcmp(email_enter, email_save) == 0)
                 {
@@ -173,7 +293,7 @@ int main()
             {
 
                 printf("\n\nPassword* :");
-                scanf("%s", &enter_password);
+                scanf("%s", enter_password);
                 if (strcmp(enter_password, save_password) == 0)
                 {
                     printf("Valid Password");
@@ -201,7 +321,7 @@ int main()
                 printf("Number of Rooms:");
                 scanf("%d", &qty);
                 total_amt(price, time, qty);
-                room(qty, room_n);
+                payment(upi_id, debit_card, credit_card, password_banking, user_id, payment_type, card, pin, lenght_card, price, time, qty, i, room_n);
             }
 
             if (book_room == 2)
@@ -216,7 +336,7 @@ int main()
                 scanf("%d", &qty);
 
                 total_amt(price, time, qty);
-                room(qty, room_n);
+                payment(upi_id, debit_card, credit_card, password_banking, user_id, payment_type, card, pin, lenght_card, price, time, qty, i, room_n);
             }
 
             if (book_room == 3)
@@ -231,7 +351,7 @@ int main()
                 scanf("%d", &qty);
 
                 total_amt(price, time, qty);
-                room(qty, room_n);
+                payment(upi_id, debit_card, credit_card, password_banking, user_id, payment_type, card, pin, lenght_card, price, time, qty, i, room_n);
             }
 
             if (book_room == 4)
@@ -245,7 +365,7 @@ int main()
                 printf("Number of Rooms:");
                 scanf("%d", &qty);
                 total_amt(price, time, qty);
-                room(qty, room_n);
+                payment(upi_id, debit_card, credit_card, password_banking, user_id, payment_type, card, pin, lenght_card, price, time, qty, i, room_n);
             }
 
             if (book_room == 5)
@@ -259,7 +379,7 @@ int main()
                 printf("Numbers of Rooms:");
                 scanf("%d", &qty);
                 total_amt(price, time, qty);
-                room(qty, room_n);
+                payment(upi_id, debit_card, credit_card, password_banking, user_id, payment_type, card, pin, lenght_card, price, time, qty, i, room_n);
             }
         }
         //------------------about hotel------------------
