@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Management - QR Code Payment</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 650px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 35px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 20px;
+        }
+
+        .logo {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 40px;
+            margin-bottom: 15px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 32px;
+            margin-bottom: 5px;
+        }
+
+        .hotel-name {
+            color: #667eea;
+            font-size: 14px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .payment-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 35px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .card-header {
+            font-size: 12px;
+            opacity: 0.8;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .card-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-size: 13px;
+        }
+
+        .card-label {
+            opacity: 0.85;
+        }
+
+        .card-value {
+            font-weight: bold;
+            text-align: right;
+            word-break: break-all;
+        }
+
+        .amount-section {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .amount-label {
+            opacity: 0.85;
+            margin-bottom: 8px;
+            font-size: 12px;
+        }
+
+        .amount {
+            font-size: 42px;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .qr-container {
+            background: #f8f9fa;
+            padding: 35px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 30px 0;
+            border: 2px dashed #667eea;
+        }
+
+        .qr-title {
+            color: #333;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        #qrcode {
+            display: inline-block;
+            padding: 15px;
+            background: white;
+            border: 3px solid #667eea;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            border-radius: 5px;
+            color: #1565c0;
+            font-size: 13px;
+        }
+
+        .info-box strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .instructions {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+
+        .instructions h4 {
+            color: #856404;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .instructions ol {
+            margin-left: 20px;
+            color: #856404;
+            font-size: 13px;
+            line-height: 1.8;
+        }
+
+        .instructions li {
+            margin-bottom: 8px;
+        }
+
+        .supported-apps {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .app-badge {
+            background: #f0f0f0;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            text-align: center;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .status-bar {
+            margin: 25px 0;
+            padding: 18px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .status-bar.pending {
+            background: #fffde7;
+            color: #f57f17;
+        }
+
+        .status-bar.success {
+            background: #c8e6c9;
+            color: #2e7d32;
+        }
+
+        .timer {
+            color: #d32f2f;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .countdown {
+            font-size: 18px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .security-notice {
+            background: #f3e5f5;
+            border-left: 4px solid #9c27b0;
+            padding: 15px;
+            border-radius: 5px;
+            color: #6a1b9a;
+            font-size: 12px;
+            margin-bottom: 20px;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            color: #666;
+            font-size: 11px;
+            line-height: 1.8;
+        }
+
+        .footer p {
+            margin-bottom: 8px;
+        }
+
+        .footer strong {
+            color: #333;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 25px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .payment-card {
+                padding: 25px;
+            }
+
+            .amount {
+                font-size: 32px;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .supported-apps {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .card-row {
+                font-size: 12px;
+            }
+        }
+
+        .success-animation {
+            animation: successPulse 0.5s ease-in-out;
+        }
+
+        @keyframes successPulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🏨</div>
+            <h1>Secure Payment</h1>
+            <div class="hotel-name">LUXURY HOTEL MANAGEMENT SYSTEM</div>
+        </div>
+
+        <div class="payment-card">
+            <div class="card-header">Payment Details</div>
+            <div class="card-row">
+                <span class="card-label">Transaction ID</span>
+                <span class="card-value" id="txn-id">HOTEL1738800000000</span>
+            </div>
+            <div class="card-row">
+                <span class="card-label">Merchant</span>
+                <span class="card-value">Luxury Hotel Services</span>
+            </div>
+            <div class="card-row">
+                <span class="card-label">Room Type</span>
+                <span class="card-value">Premium Suite</span>
+            </div>
+            <div class="card-row">
+                <span class="card-label">Duration</span>
+                <span class="card-value" id="duration">2 Nights</span>
+            </div>
+            <div class="card-row">
+                <span class="card-label">Timestamp</span>
+                <span class="card-value" id="timestamp">--:--:--</span>
+            </div>
+            <div class="amount-section">
+                <div class="amount-label">TOTAL AMOUNT</div>
+                <p class="amount">₹<span id="amount">5000</span></p>
+            </div>
+        </div>
+
+        <div class="info-grid">
+            <div class="info-box">
+                <strong>✓ Verified Merchant</strong>
+                Luxury Hotel Management
+            </div>
+            <div class="info-box">
+                <strong>🔒 Secure Payment</strong>
+                256-bit SSL Encrypted
+            </div>
+        </div>
+
+        <div class="qr-container">
+            <div class="qr-title">
+                <span>📱</span> Scan QR Code to Pay
+            </div>
+            <div id="qrcode"></div>
+        </div>
+
+        <div class="instructions">
+            <h4>✅ Payment Steps:</h4>
+            <ol>
+                <li><strong>Open UPI App</strong> - Use Google Pay, PhonePe, Paytm, or any UPI app</li>
+                <li><strong>Tap "Send Money"</strong> - Or look for "Scan QR Code" option</li>
+                <li><strong>Point Your Camera</strong> - Hold over the QR code above</li>
+                <li><strong>Verify Details</strong> - Check the amount and merchant name</li>
+                <li><strong>Enter UPI PIN</strong> - Confirm the payment with your PIN</li>
+                <li><strong>Done!</strong> - Payment confirmation will appear</li>
+            </ol>
+
+            <h4 style="margin-top: 20px;">Supported Payment Apps:</h4>
+            <div class="supported-apps">
+                <div class="app-badge">💳 Google Pay</div>
+                <div class="app-badge">📱 PhonePe</div>
+                <div class="app-badge">🏦 Paytm</div>
+                <div class="app-badge">🇮🇳 BHIM</div>
+                <div class="app-badge">💬 WhatsApp Pay</div>
+                <div class="app-badge">🛒 Amazon Pay</div>
+            </div>
+        </div>
+
+        <div class="security-notice">
+            🔐 <strong>Security Notice:</strong> Your payment information is encrypted with industry-standard SSL 256-bit encryption. Your card details are not stored on our servers.
+        </div>
+
+        <div class="status-bar pending" id="status">
+            ⏳ <strong>Awaiting Payment</strong>
+            <div class="timer">Payment expires in: <span class="countdown" id="countdown">15:00</span></div>
+        </div>
+
+        <div class="footer">
+            <p><strong>Transaction Reference:</strong> <span id="ref">HOTEL20260207</span></p>
+            <p>Need help? <strong>support@luxuryhotel.com</strong> | <strong>+1-800-HOTEL (4-6835)</strong></p>
+            <p>© 2026 Luxury Hotel Management System. All rights reserved.</p>
+            <p>By proceeding with this payment, you agree to our Terms & Conditions.</p>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const CONFIG = {
+            upiId: 'hotelmanagement@okhdfcbank',
+            merchantName: 'Luxury Hotel Services',
+            amount: 5000,
+            transactionId: 'HOTEL' + Date.now(),
+            validityMinutes: 15
+        };
+
+        // Generate QR Code with UPI standard format
+        function generateQRCode() {
+            const upiString = `upi://pay?pa=${CONFIG.upiId}&pn=${CONFIG.merchantName.replace(/\s/g, '%20')}&am=${CONFIG.amount}&tr=${CONFIG.transactionId}&tn=Hotel%20Booking`;
+            
+            new QRCode(document.getElementById('qrcode'), {
+                text: upiString,
+                width: 280,
+                height: 280,
+                colorDark: '#667eea',
+                colorLight: '#ffffff',
+                correctLevel: QRCode.CorrectLevel.H
+            });
+        }
+
+        // Update timestamp
+        function updateTimestamp() {
+            const now = new Date();
+            const options = { 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                second: '2-digit'
+            };
+            document.getElementById('timestamp').textContent = now.toLocaleTimeString('en-US', options);
+        }
+
+        // Countdown timer
+        let timeLeftSeconds = CONFIG.validityMinutes * 60;
+        function updateCountdown() {
+            const minutes = Math.floor(timeLeftSeconds / 60);
+            const seconds = timeLeftSeconds % 60;
+            document.getElementById('countdown').textContent = 
+                String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
+            
+            if (timeLeftSeconds <= 0) {
+                const status = document.getElementById('status');
+                status.style.background = '#ffcdd2';
+                status.style.color = '#c62828';
+                status.innerHTML = '❌ <strong>Payment Expired!</strong><br>Please initiate a new transaction';
+            } else {
+                timeLeftSeconds--;
+            }
+        }
+
+        // Simulate payment success
+        function simulatePaymentSuccess() {
+            setTimeout(() => {
+                const status = document.getElementById('status');
+                status.className = 'status-bar success success-animation';
+                status.innerHTML = '✅ <strong>Payment Successful!</strong><br>Your room booking is confirmed. Confirmation email has been sent.';
+            }, 30000); // Show success after 30 seconds for demo
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            generateQRCode();
+            updateTimestamp();
+            updateCountdown();
+            
+            // Update timestamp every second
+            setInterval(updateTimestamp, 1000);
+            
+            // Update countdown every second
+            setInterval(updateCountdown, 1000);
+            
+            // Simulate payment success
+            simulatePaymentSuccess();
+            
+            // Update dynamic content
+            document.getElementById('txn-id').textContent = CONFIG.transactionId;
+            document.getElementById('amount').textContent = CONFIG.amount;
+            document.getElementById('ref').textContent = 'HOTEL' + new Date().toISOString().split('T')[0].replace(/-/g, '');
+        });
+    </script>
+</body>
+</html>

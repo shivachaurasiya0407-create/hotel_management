@@ -2,6 +2,104 @@
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
+
+// QR Code and Payment functions
+void generate_qr_code(int amount, char* payment_id, char* upi_id) {
+    FILE *html_file = fopen("qr_payment.html", "w");
+    if (html_file == NULL) {
+        printf("Error creating payment page!\n");
+        return;
+    }
+
+    fprintf(html_file, "<!DOCTYPE html>\n");
+    fprintf(html_file, "<html lang='en'>\n");
+    fprintf(html_file, "<head>\n");
+    fprintf(html_file, "    <meta charset='UTF-8'>\n");
+    fprintf(html_file, "    <meta name='viewport' content='width=device-width, initial-scale=1.0'>\n");
+    fprintf(html_file, "    <title>Hotel Payment - QR Code</title>\n");
+    fprintf(html_file, "    <script src='https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js'></script>\n");
+    fprintf(html_file, "    <style>\n");
+    fprintf(html_file, "        * { margin: 0; padding: 0; box-sizing: border-box; }\n");
+    fprintf(html_file, "        body { font-family: 'Arial', sans-serif; background: linear-gradient(135deg, #667eea 0%%, #764ba2 100%%); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }\n");
+    fprintf(html_file, "        .container { background: white; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); padding: 40px; max-width: 500px; width: 100%%; }\n");
+    fprintf(html_file, "        .header { text-align: center; margin-bottom: 30px; }\n");
+    fprintf(html_file, "        .header h1 { color: #333; font-size: 28px; margin-bottom: 10px; }\n");
+    fprintf(html_file, "        .hotel-name { color: #667eea; font-size: 14px; font-weight: bold; }\n");
+    fprintf(html_file, "        .payment-details { background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 25px; border-left: 4px solid #667eea; }\n");
+    fprintf(html_file, "        .detail-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 14px; }\n");
+    fprintf(html_file, "        .detail-label { color: #666; font-weight: bold; }\n");
+    fprintf(html_file, "        .detail-value { color: #333; }\n");
+    fprintf(html_file, "        .amount { font-size: 18px; color: #28a745; font-weight: bold; }\n");
+    fprintf(html_file, "        .qr-section { text-align: center; margin: 30px 0; }\n");
+    fprintf(html_file, "        .qr-section h3 { color: #333; margin-bottom: 20px; font-size: 16px; }\n");
+    fprintf(html_file, "        #qrcode { display: inline-block; padding: 15px; background: white; border: 2px solid #667eea; border-radius: 10px; }\n");
+    fprintf(html_file, "        .instructions { background: #fff3cd; padding: 15px; border-radius: 10px; margin: 20px 0; border-left: 4px solid #ffc107; }\n");
+    fprintf(html_file, "        .instructions h4 { color: #856404; margin-bottom: 10px; font-size: 14px; }\n");
+    fprintf(html_file, "        .instructions ol { margin-left: 20px; color: #856404; font-size: 13px; line-height: 1.6; }\n");
+    fprintf(html_file, "        .footer { text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; color: #666; font-size: 12px; }\n");
+    fprintf(html_file, "        .status { margin-top: 20px; padding: 10px; border-radius: 5px; text-align: center; font-weight: bold; }\n");
+    fprintf(html_file, "    </style>\n");
+    fprintf(html_file, "</head>\n");
+    fprintf(html_file, "<body>\n");
+    fprintf(html_file, "    <div class='container'>\n");
+    fprintf(html_file, "        <div class='header'>\n");
+    fprintf(html_file, "            <div class='hotel-name'>LUXURY HOTEL MANAGEMENT</div>\n");
+    fprintf(html_file, "            <h1>QR Code Payment</h1>\n");
+    fprintf(html_file, "        </div>\n");
+    fprintf(html_file, "\n");
+    fprintf(html_file, "        <div class='payment-details'>\n");
+    fprintf(html_file, "            <div class='detail-row'>\n");
+    fprintf(html_file, "                <span class='detail-label'>Payment ID:</span>\n");
+    fprintf(html_file, "                <span class='detail-value'>%s</span>\n", payment_id);
+    fprintf(html_file, "            </div>\n");
+    fprintf(html_file, "            <div class='detail-row'>\n");
+    fprintf(html_file, "                <span class='detail-label'>UPI ID:</span>\n");
+    fprintf(html_file, "                <span class='detail-value'>%s</span>\n", upi_id);
+    fprintf(html_file, "            </div>\n");
+    fprintf(html_file, "            <div class='detail-row'>\n");
+    fprintf(html_file, "                <span class='detail-label'>Amount:</span>\n");
+    fprintf(html_file, "                <span class='detail-value amount'>₹%d</span>\n", amount);
+    fprintf(html_file, "            </div>\n");
+    fprintf(html_file, "        </div>\n");
+    fprintf(html_file, "\n");
+    fprintf(html_file, "        <div class='qr-section'>\n");
+    fprintf(html_file, "            <h3>Scan QR Code to Pay</h3>\n");
+    fprintf(html_file, "            <div id='qrcode'></div>\n");
+    fprintf(html_file, "        </div>\n");
+    fprintf(html_file, "\n");
+    fprintf(html_file, "        <div class='instructions'>\n");
+    fprintf(html_file, "            <h4>How to Pay:</h4>\n");
+    fprintf(html_file, "            <ol>\n");
+    fprintf(html_file, "                <li>Open your UPI App (Google Pay, PhonePe, Paytm)</li>\n");
+    fprintf(html_file, "                <li>Tap on 'Send Money' or 'Scan QR Code'</li>\n");
+    fprintf(html_file, "                <li>Scan the QR code above</li>\n");
+    fprintf(html_file, "                <li>Verify amount and complete payment</li>\n");
+    fprintf(html_file, "                <li>Enter your UPI PIN</li>\n");
+    fprintf(html_file, "            </ol>\n");
+    fprintf(html_file, "        </div>\n");
+    fprintf(html_file, "\n");
+    fprintf(html_file, "        <div class='footer'>\n");
+    fprintf(html_file, "            <p>Payment valid for 15 minutes</p>\n");
+    fprintf(html_file, "            <p>Support: support@luxuryhotel.com</p>\n");
+    fprintf(html_file, "        </div>\n");
+    fprintf(html_file, "    </div>\n");
+    fprintf(html_file, "\n");
+    fprintf(html_file, "    <script>\n");
+    fprintf(html_file, "        var qrData = 'upi://pay?pa=%s&pn=HotelPayment&am=%d&tn=Hotel%%20Booking&tr=%s';\n", upi_id, amount, payment_id);
+    fprintf(html_file, "        new QRCode(document.getElementById('qrcode'), {\n");
+    fprintf(html_file, "            text: qrData,\n");
+    fprintf(html_file, "            width: 250,\n");
+    fprintf(html_file, "            height: 250,\n");
+    fprintf(html_file, "            colorDark: '#667eea',\n");
+    fprintf(html_file, "            colorLight: '#ffffff',\n");
+    fprintf(html_file, "            correctLevel: QRCode.CorrectLevel.H\n");
+    fprintf(html_file, "        });\n");
+    fprintf(html_file, "    </script>\n");
+    fprintf(html_file, "</body>\n");
+    fprintf(html_file, "</html>\n");
+
+    fclose(html_file);
+}
 void total_amt(int price, int time, int qty)
 {
     printf("Total Amt.:%d\n\n", price * time * qty);
@@ -16,14 +114,23 @@ void room(int qty, int i)
     }
 }
 
-void payment(char upi_id[50], char debit_card[20], char credit_card[20], char password_banking[50], char user_id[50], int payment_type, int card, int pin, int lenght_card, int price, int time, int qty, int i, int room_n)
+void payment(char upi_id[50], char debit_card[20], char credit_card[20], char password_banking[50], char user_id[50], int payment_type, int card, int pin, int lenght_card, int price, int hours, int qty, int i, int room_n)
 {
     lenght_card = 0;
+    char payment_id[50];
+    int total_amount;
 
     while (1)
     {
 
-        printf("Payment method\n1.UPI Payment\n2.Card Payment\n3.Banking Channel\n4.Case\\Offline\n>");
+        printf("\n========== PAYMENT METHOD ==========\n");
+        printf("1. UPI Payment\n");
+        printf("2. Card Payment\n");
+        printf("3. Banking Channel\n");
+        printf("4. QR Code Payment (Recommended)\n");
+        printf("5. Cash/Offline\n");
+        printf("====================================\n");
+        printf("Select Payment Method >");
         scanf("%d", &payment_type);
         if (payment_type == 1)
         {
@@ -38,7 +145,7 @@ void payment(char upi_id[50], char debit_card[20], char credit_card[20], char pa
                     printf("Valid UPI Id\n");
 
                     printf("Pay bill\n");
-                    total_amt(price, time, qty);
+                    total_amt(price, hours, qty);
                     printf("Enter Pin No.:");
                     scanf("%d", &pin);
                     printf("\nSecessfull Payment\n");
@@ -70,7 +177,7 @@ void payment(char upi_id[50], char debit_card[20], char credit_card[20], char pa
                     {
                         printf("Valid Card No\n");
                         printf("Pay bill\n");
-                        total_amt(price, time, qty);
+                        total_amt(price, hours, qty);
                         printf("Enter Pin No.:");
                         scanf("%d", &pin);
                         printf("\nSecessfull Payment\n");
@@ -91,7 +198,7 @@ void payment(char upi_id[50], char debit_card[20], char credit_card[20], char pa
                     {
                         printf("Valid Card No\n");
                         printf("Pay bill\n");
-                        total_amt(price, time, qty);
+                        total_amt(price, hours, qty);
                         printf("Enter Pin No.:");
                         scanf("%d", &pin);
                         printf("\nSecessfull Payment\n");
@@ -116,7 +223,7 @@ void payment(char upi_id[50], char debit_card[20], char credit_card[20], char pa
             scanf("%s", password_banking);
             printf("Secessful Login\n");
             printf("Pay bill\n");
-            total_amt(price, time, qty);
+            total_amt(price, hours, qty);
             printf("Enter Pin No.:");
             scanf("%d", &pin);
             printf("\nSecessfull Payment\n");
@@ -125,7 +232,55 @@ void payment(char upi_id[50], char debit_card[20], char credit_card[20], char pa
 
         if (payment_type == 4)
         {
-            printf("Case\\Offline\n");
+            printf("\n\t\t\t\t\t\t=== QR CODE PAYMENT ===\n");
+            printf("This is the fastest and most secure way to pay!\n\n");
+            
+            // Generate unique payment ID
+            sprintf(payment_id, "HOTEL%d%d", (rand() % 10000) + (rand() % 1000), rand() % 999);
+            
+            // Calculate total amount
+            total_amount = price * hours * qty;
+            
+            // Get UPI ID
+            printf("Enter Your UPI ID (e.g., yourname@paytm): ");
+            scanf("%s", upi_id);
+            
+            // Validate UPI ID
+            if (strstr(upi_id, "@") == NULL) {
+                printf("Invalid UPI ID format!\n");
+                break;
+            }
+            
+            printf("\n=== PAYMENT SUMMARY ===\n");
+            printf("Payment ID: %s\n", payment_id);
+            printf("Amount: Rs. %d\n", total_amount);
+            printf("UPI ID: %s\n", upi_id);
+            printf("Status: Opening Payment Page...\n\n");
+            
+            // Generate QR code HTML page
+            generate_qr_code(total_amount, payment_id, upi_id);
+            
+            // Automatically open the payment page in default browser
+            system("start qr_payment.html");
+            
+            printf("Payment page opened in your browser automatically!\n");
+            printf("Scan the QR code with your UPI app to complete payment.\n\n");
+            
+            printf("Enter PIN to confirm payment (or 0 to cancel): ");
+            scanf("%d", &pin);
+            
+            if (pin != 0) {
+                printf("\n✓ Payment Successful!\n");
+                printf("✓ Transaction ID: %s\n", payment_id);
+                room(qty, room_n);
+            } else {
+                printf("\nPayment cancelled.\n");
+            }
+        }
+
+        if (payment_type == 5)
+        {
+            printf("Cash/Offline Payment\n");
             room(qty, room_n);
         }
         break;
